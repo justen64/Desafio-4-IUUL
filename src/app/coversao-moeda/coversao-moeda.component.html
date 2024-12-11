@@ -1,0 +1,73 @@
+<div class="container-conversor">
+  <h1>Conversor de Moedas</h1>
+
+  <div class="conversao">
+    <div class="campo">
+      <label for="moedaOrigem">Moeda de Origem</label>
+      <div>
+        <select [(ngModel)]="moedaOrigem" id="moedaOrigem">
+          <option *ngFor="let moeda of moedas" [value]="moeda.value">
+            {{ moeda.label }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="campo">
+      <label for="quantia">Quantia</label>
+      <input
+        type="number"
+        [(ngModel)]="quantia"
+        id="quantia"
+        placeholder="Digite o valor"
+      />
+    </div>
+
+    <div class="campo">
+      <label for="moedaDestino">Moeda de Destino</label>
+      <div>
+        <select [(ngModel)]="moedaDestino" id="moedaDestino">
+          <option *ngFor="let moeda of moedas" [value]="moeda.value">
+            {{ moeda.label }}
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="campo-botao">
+    <button class="btn-converter" (click)="converter()">Converter</button>
+  </div>
+
+  <div *ngIf="quantiaConvertida > 0" class="resultado-conversao">
+    <h3>Resultado da Conversão:</h3>
+    <p>
+      {{ quantia }} {{ moedaOrigem }} =
+      {{ quantiaConvertida | number : "1.2-2" }} {{ moedaDestino }}
+    </p>
+  </div>
+
+  <div *ngIf="historico.length > 0" class="custom-table">
+    <h3>Histórico de Conversões</h3>
+    <p-table [value]="historico">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Data</th>
+          <th>Moeda Origem</th>
+          <th>Moeda Destino</th>
+          <th>Quantia</th>
+          <th>Quantia Convertida</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td>{{ item.data }}</td>
+          <td>{{ item.moedaOrigem }}</td>
+          <td>{{ item.moedaDestino }}</td>
+          <td>{{ item.quantia | number : "1.2-2" }}</td>
+          <td>{{ item.quantiaConvertida | number : "1.2-2" }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
