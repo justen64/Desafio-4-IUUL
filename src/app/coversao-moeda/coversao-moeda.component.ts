@@ -1,12 +1,5 @@
-import {
-  Component,
-  OnInit,
-  signal,
-  Signal,
-  WritableSignal,
-} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ConversaoService } from '../service/conversao.service';
-import { TaxaResposta } from '../models/moedas';
 
 @Component({
   selector: 'app-coversao-moeda',
@@ -16,45 +9,42 @@ import { TaxaResposta } from '../models/moedas';
 export class CoversaoMoedaComponent implements OnInit {
   quantia: number = 0;
   quantiaConvertida: number = 0;
-  moedaOrigem: string = 'BRL';
-  moedaDestino: string = 'USD';
+  moedaOrigem: string = 'USD';
+  moedaDestino: string = 'BRL';
   taxas: { [key: string]: number } = {};
-  moedas: any[] = [];
+  moedas: { label: string; value: string }[] = [];
   historico: any[] = [];
-  dadosTaxas: WritableSignal<TaxaResposta | undefined> = signal(undefined);
 
-  constructor(private serviceMoeda: ConversaoService) {}
+  constructor(private conversaoService: ConversaoService) {}
 
   ngOnInit(): void {
-    this.carregarTaxas();
+    this.carregarMoedas();
+    this.carregarTaxas(this.moedaOrigem);
   }
 
-  carregarTaxas() {
-    this.serviceMoeda
-      .obterTaxas(this.moedaOrigem)
-      .subscribe((resposta: any) => {
-        if (resposta && resposta.conversion_rates) {
-          this.dadosTaxas.set(resposta as TaxaResposta);
-          this.taxas = resposta.conversion_rates;
+  carregarMoedas() {
+    this.conversaoService.obterMoedas(this.moedaOrigem).subscribe((moedas) => {
+      this.moedas = moedas;
+    });
+  }
 
-          this.moedas = Object.keys(this.taxas).map((moeda) => ({
-            label: moeda,
-            value: moeda,
-          }));
-        } else {
-          console.error('Resposta inválida da API:', resposta);
-        }
-      });
+  carregarTaxas(base: string) {
+    this.conversaoService.obterTaxas(base).subscribe((taxas) => {
+      this.taxas = taxas;
+    });
   }
 
   converter() {
-    if (!this.taxas[this.moedaDestino]) {
-      alert('Taxa de câmbio para a moeda de destino não encontrada.');
+    const taxaOrigem = this.taxas[this.moedaOrigem];
+    const taxaDestino = this.taxas[this.moedaDestino];
+  
+    if (!taxaOrigem || !taxaDestino) {
+      alert('Taxa de câmbio não encontrada para a moeda selecionada.');
       return;
     }
-
-    this.quantiaConvertida = this.quantia * this.taxas[this.moedaDestino];
-
+  
+    this.quantiaConvertida = (this.quantia / taxaOrigem) * taxaDestino;
+  
     this.historico.unshift({
       data: new Date().toLocaleString(),
       moedaOrigem: this.moedaOrigem,
@@ -63,4 +53,5 @@ export class CoversaoMoedaComponent implements OnInit {
       quantiaConvertida: this.quantiaConvertida,
     });
   }
+  
 }

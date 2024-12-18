@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { TaxaResposta } from '../models/moedas';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +12,40 @@ export class ConversaoService {
 
   constructor(private http: HttpClient) {}
 
-  obterTaxas(moedaOrigem: string): Observable<Partial<TaxaResposta>> {
-    return this.http.get(`${this.apiUrl}${moedaOrigem}`);
+  obterMoedas(moedaOrigem: string): Observable<{ label: string; value: string }[]> {
+    return this.http.get(`${this.apiUrl}${moedaOrigem}`).pipe(
+      map((resposta: any) => {
+        if (!resposta || !resposta.conversion_rates) {
+          throw new Error('Resposta inválida da API.');
+        }
+
+        const moedas = Object.keys(resposta.conversion_rates).map((moeda) => ({
+          label: moeda,
+          value: moeda,
+        }));
+
+        return moedas;
+      }),
+      catchError((error) => {
+        console.error('Erro ao obter moedas:', error);
+        return of([]);
+      })
+    );
+  }
+
+  obterTaxas(moedaOrigem: string): Observable<{ [key: string]: number }> {
+    return this.http.get(`${this.apiUrl}${moedaOrigem}`).pipe(
+      map((resposta: any) => {
+        if (!resposta || !resposta.conversion_rates) {
+          throw new Error('Resposta inválida da API.');
+        }
+
+        return resposta.conversion_rates;
+      }),
+      catchError((error) => {
+        console.error('Erro ao obter taxas:', error);
+        return of({});
+      })
+    );
   }
 }
