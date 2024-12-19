@@ -36,16 +36,17 @@
   </div>
 
   <div class="campo-botao">
-    <button class="btn-converter" (click)="converter()">Converter</button>
+    <button class="converter" (click)="converter()">Converter</button>
   </div>
 
   <div *ngIf="quantiaConvertida > 0" class="resultado-conversao">
     <h3>Resultado da Conversão:</h3>
     <p>
-      {{ quantia }} {{ moedaOrigem }} =
+      {{ quantiaCalculada }} {{ moedaOrigem }} =
       {{ quantiaConvertida | number : "1.2-2" }} {{ moedaDestino }}
     </p>
   </div>
+  
 
   <div *ngIf="historico.length > 0" class="custom-table">
     <h3>Histórico de Conversões</h3>
@@ -57,17 +58,23 @@
           <th>Moeda Destino</th>
           <th>Quantia</th>
           <th>Quantia Convertida</th>
+          <th></th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-item>
+      <ng-template pTemplate="body" let-item let-i="rowIndex">
         <tr>
           <td>{{ item.data }}</td>
           <td>{{ item.moedaOrigem }}</td>
           <td>{{ item.moedaDestino }}</td>
           <td>{{ item.quantia | number : "1.2-2" }}</td>
           <td>{{ item.quantiaConvertida | number : "1.2-2" }}</td>
+          <td>
+            <button class="excluir" (click)="excluirHistoricoPorId(item.id)"
+            >Excluir</button>
+          </td>
         </tr>
       </ng-template>
+      
     </p-table>
   </div>
 </div>

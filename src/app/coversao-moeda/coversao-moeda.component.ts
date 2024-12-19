@@ -9,6 +9,7 @@ import { ConversaoService } from '../service/conversao.service';
 export class CoversaoMoedaComponent implements OnInit {
   quantia: number = 0;
   quantiaConvertida: number = 0;
+  quantiaCalculada: number = 0
   moedaOrigem: string = 'USD';
   moedaDestino: string = 'BRL';
   taxas: { [key: string]: number } = {};
@@ -43,9 +44,11 @@ export class CoversaoMoedaComponent implements OnInit {
       return;
     }
   
+    this.quantiaCalculada = this.quantia;
     this.quantiaConvertida = (this.quantia / taxaOrigem) * taxaDestino;
   
     this.historico.unshift({
+      id: Date.now(),
       data: new Date().toLocaleString(),
       moedaOrigem: this.moedaOrigem,
       moedaDestino: this.moedaDestino,
@@ -53,5 +56,10 @@ export class CoversaoMoedaComponent implements OnInit {
       quantiaConvertida: this.quantiaConvertida,
     });
   }
+  
+  excluirHistoricoPorId(id: number): void {
+    this.historico = this.historico.filter(item => item.id !== id);
+  }
+  
   
 }

@@ -56,7 +56,7 @@
     justify-content: end;
   }
 
-  .btn-converter {
+  .converter {
     width: 30%;
     font-size: 1.2rem;
     background-color: #94addf;
@@ -124,6 +124,21 @@
     overflow-y: auto;
   }
 }
+
+.excluir {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #ff7875;
+  }
+}
+
 
 @media (max-width: 768px) {
   .conversao {
