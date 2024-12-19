@@ -45,7 +45,10 @@ export class CoversaoMoedaComponent implements OnInit {
     }
   
     this.quantiaCalculada = this.quantia;
-    this.quantiaConvertida = (this.quantia / taxaOrigem) * taxaDestino;
+  
+    const taxaConversao = taxaDestino / taxaOrigem;
+  
+    this.quantiaConvertida = this.quantia * taxaConversao;
   
     this.historico.unshift({
       id: Date.now(),
@@ -54,8 +57,10 @@ export class CoversaoMoedaComponent implements OnInit {
       moedaDestino: this.moedaDestino,
       quantia: this.quantia,
       quantiaConvertida: this.quantiaConvertida,
+      taxa: taxaConversao
     });
   }
+  
   
   excluirHistoricoPorId(id: number): void {
     this.historico = this.historico.filter(item => item.id !== id);

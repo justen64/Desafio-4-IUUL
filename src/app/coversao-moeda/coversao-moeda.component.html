@@ -45,6 +45,7 @@
       {{ quantiaCalculada }} {{ moedaOrigem }} =
       {{ quantiaConvertida | number : "1.2-2" }} {{ moedaDestino }}
     </p>
+    <p>Taxa de conversão: {{ (taxas[moedaDestino] / taxas[moedaOrigem]) | number : "1.6-6" }}</p>
   </div>
   
 
@@ -58,6 +59,7 @@
           <th>Moeda Destino</th>
           <th>Quantia</th>
           <th>Quantia Convertida</th>
+          <th>Taxa</th>
           <th></th>
         </tr>
       </ng-template>
@@ -68,6 +70,7 @@
           <td>{{ item.moedaDestino }}</td>
           <td>{{ item.quantia | number : "1.2-2" }}</td>
           <td>{{ item.quantiaConvertida | number : "1.2-2" }}</td>
+          <td>{{ item.taxa | number : "1.6-6" }}</td> 
           <td>
             <button class="excluir" (click)="excluirHistoricoPorId(item.id)"
             >Excluir</button>
